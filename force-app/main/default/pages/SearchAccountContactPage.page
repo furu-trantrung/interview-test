@@ -1,0 +1,53 @@
+<apex:page controller="SearchAccountContactPageController">
+    <script type="text/javascript">
+    function updateCounter(id) {
+        console.log(id);
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.SearchAccountContactPageController.updateCounter}',
+            id, 
+            function(result, event){
+           		if(event.status){
+                	document.getElementById(id).innerHTML++;
+                } else {
+                	console.log('failed');
+                }
+            }
+        );
+    }
+    </script>
+
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockSection id="contact-table" columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:inputText label="Name" value="{!name}" />
+                    <apex:commandButton value="Search" action="{!searchAccountContactByName}" reRender="contact-table" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockTable value="{!result}" var="c">
+                    <apex:column >
+                        <apex:facet name="header">Name</apex:facet>
+                        {!c.name}
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">Record Type</apex:facet>
+                        {!c.recordType}
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">Counter</apex:facet>
+                        <p id="{!c.id}">{!c.counter}</p>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">Click To Update Counter</apex:facet>
+                        <button value="{!c.id}" onclick="updateCounter(this.value); return false;">Update Counter</button>
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">Link to Record</apex:facet>
+    					<apex:outputLink value="{!c.link}">View</apex:outputLink>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>
